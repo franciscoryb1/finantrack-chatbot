@@ -1,0 +1,22 @@
+text,intent
+Cuánto gasté en enero,get_expenses_total
+Cuánto gasté este mes,get_expenses_total
+Cuánto se me fue el mes pasado,get_expenses_total
+Gastos de enero,get_expenses_total
+Total gastado en febrero,get_expenses_total
+En qué gasté más este mes,get_expenses_by_category
+Gastos por categoría en enero,get_expenses_by_category
+Distribución de gastos del mes,get_expenses_by_category
+Mostrame mis gastos,get_movements
+Listado de gastos de enero,get_movements
+Qué pagos hice este mes,get_movements
+Últimos movimientos,get_movements
+Cuánto dinero tengo,get_balance
+Cuál es mi saldo,get_balance
+Saldo actual,get_balance
+Ayuda,help
+Qué podés hacer,help
+?,help
+Hola,unknown
+asdfgh,unknown
+No entiendo nada,unknown
