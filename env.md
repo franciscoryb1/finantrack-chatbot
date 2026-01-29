@@ -4,6 +4,7 @@ docker --version
 python 3.11.7
 
 python -m venv .venv
+py -3.11 -m venv .venv
 
 .\.venv\Scripts\Activate.ps1
 
