@@ -1,22 +1,210 @@
 text,intent
-Cuánto gasté en enero,get_expenses_total
-Cuánto gasté este mes,get_expenses_total
-Cuánto se me fue el mes pasado,get_expenses_total
-Gastos de enero,get_expenses_total
-Total gastado en febrero,get_expenses_total
-En qué gasté más este mes,get_expenses_by_category
-Gastos por categoría en enero,get_expenses_by_category
-Distribución de gastos del mes,get_expenses_by_category
-Mostrame mis gastos,get_movements
-Listado de gastos de enero,get_movements
-Qué pagos hice este mes,get_movements
-Últimos movimientos,get_movements
-Cuánto dinero tengo,get_balance
-Cuál es mi saldo,get_balance
-Saldo actual,get_balance
-Ayuda,help
-Qué podés hacer,help
-?,help
-Hola,unknown
-asdfgh,unknown
-No entiendo nada,unknown
+cuanto gaste este mes,get_expenses_total
+total de gastos del mes,get_expenses_total
+quiero saber cuanto gaste,get_expenses_total
+cuanto fue mi gasto total,get_expenses_total
+cuanto llevo gastado,get_expenses_total
+decime cuanto gaste este mes,get_expenses_total
+cuanto dinero gaste,get_expenses_total
+cuanto se me fue en gastos,get_expenses_total
+total gastado este mes,get_expenses_total
+cuanto gaste hasta ahora,get_expenses_total
+me decis el total de gastos,get_expenses_total
+cuanto fue el gasto general,get_expenses_total
+cuanto gaste en total,get_expenses_total
+cuanto llevo gastado este mes,get_expenses_total
+ver total de gastos,get_expenses_total
+cuanto gaste el mes pasado,get_expenses_total
+gastos totales del mes,get_expenses_total
+necesito saber cuanto gaste,get_expenses_total
+cuanto plata gaste,get_expenses_total
+cuanto termine gastando,get_expenses_total
+cuanto fue todo lo que gaste,get_expenses_total
+cuanto llevo gastado hoy,get_expenses_total
+cuanto gaste esta semana,get_expenses_total
+cuanto gaste ayer,get_expenses_total
+gaste mucho este mes,get_expenses_total
+total de lo que gaste,get_expenses_total
+cuanto se gasto en total,get_expenses_total
+cuanto gaste en estos dias,get_expenses_total
+cuanto gaste en general,get_expenses_total
+total de gastos recientes,get_expenses_total
+cuanto gaste mas o menos,get_expenses_total
+cuanto fue el total gastado,get_expenses_total
+cuanto gaste en el periodo,get_expenses_total
+cuanto gaste ultimamente,get_expenses_total
+cuanto plata se me fue,get_expenses_total
+gastos por categoria,get_expenses_by_category
+ver gastos agrupados,get_expenses_by_category
+mostrame gastos por tipo,get_expenses_by_category
+en que gaste mas,get_expenses_by_category
+comparar gastos por categoria,get_expenses_by_category
+gastos separados por categoria,get_expenses_by_category
+ver categorias de gastos,get_expenses_by_category
+como se dividen mis gastos,get_expenses_by_category
+gastos de cada categoria,get_expenses_by_category
+quiero ver gastos por rubro,get_expenses_by_category
+que categoria gaste mas,get_expenses_by_category
+gastos comida transporte etc,get_expenses_by_category
+detalle por categoria,get_expenses_by_category
+ver gastos por grupo,get_expenses_by_category
+gastos clasificados,get_expenses_by_category
+comparar categorias de gastos,get_expenses_by_category
+en que categorias gaste,get_expenses_by_category
+gastos segun categoria,get_expenses_by_category
+distribucion de gastos,get_expenses_by_category
+ver gastos por area,get_expenses_by_category
+gastos por tipo de consumo,get_expenses_by_category
+en que se fue la plata,get_expenses_by_category
+categoria con mas gasto,get_expenses_by_category
+gastos ordenados por categoria,get_expenses_by_category
+ver resumen por categoria,get_expenses_by_category
+comparar comida y transporte,get_expenses_by_category
+gastos por cada categoria,get_expenses_by_category
+clasificacion de gastos,get_expenses_by_category
+resumen de gastos por categoria,get_expenses_by_category
+gastos agrupados por tipo,get_expenses_by_category
+en que rubros gasto,get_expenses_by_category
+gastos divididos por categoria,get_expenses_by_category
+gastos por categoria este mes,get_expenses_by_category
+ver categorias,get_expenses_by_category
+como se reparten mis gastos,get_expenses_by_category
+ver movimientos,get_movements
+listado de gastos,get_movements
+mostrame mis movimientos,get_movements
+ver detalle de gastos,get_movements
+que gastos hice,get_movements
+ver movimientos recientes,get_movements
+listar gastos,get_movements
+detalle de movimientos,get_movements
+ver transacciones,get_movements
+movimientos de la cuenta,get_movements
+ver todos los gastos,get_movements
+que movimientos tengo,get_movements
+ver historial de gastos,get_movements
+movimientos del mes,get_movements
+ver consumos,get_movements
+listar movimientos,get_movements
+ver pagos realizados,get_movements
+detalle de consumos,get_movements
+ver operaciones,get_movements
+movimientos de dinero,get_movements
+que movimientos hice,get_movements
+ver gastos uno por uno,get_movements
+historial de movimientos,get_movements
+mostrar gastos,get_movements
+ver ultimos movimientos,get_movements
+lista de movimientos,get_movements
+ver compras,get_movements
+detalle de gastos recientes,get_movements
+movimientos recientes,get_movements
+ver registro de gastos,get_movements
+mostrar movimientos,get_movements
+ver movimientos de hoy,get_movements
+ver gastos de ayer,get_movements
+ver gastos del mes,get_movements
+ver lista de gastos,get_movements
+cuanto saldo tengo,get_balance
+ver mi saldo,get_balance
+saldo disponible,get_balance
+cuanta plata tengo,get_balance
+cuanto dinero me queda,get_balance
+ver balance,get_balance
+cuanto tengo en la cuenta,get_balance
+saldo actual,get_balance
+decime mi saldo,get_balance
+cuanto me queda,get_balance
+ver saldo actual,get_balance
+cuanta plata hay,get_balance
+mi saldo,get_balance
+cuanto dinero hay,get_balance
+saldo de la cuenta,get_balance
+cuanto tengo ahora,get_balance
+plata disponible,get_balance
+ver dinero disponible,get_balance
+cuanto queda en la cuenta,get_balance
+estado del saldo,get_balance
+ver balance actual,get_balance
+cuanta plata me queda,get_balance
+cuanto saldo queda,get_balance
+ver saldo de hoy,get_balance
+cuanto dinero tengo ahora,get_balance
+saldo restante,get_balance
+ver cuanto tengo,get_balance
+saldo hoy,get_balance
+cuanto hay disponible,get_balance
+cuanto efectivo tengo,get_balance
+ver mi balance,get_balance
+saldo general,get_balance
+cuanto me queda de plata,get_balance
+ver estado de cuenta,get_balance
+ayuda,help
+que podes hacer,help
+como funciona esto,help
+necesito ayuda,help
+que comandos hay,help
+como uso el bot,help
+que puedo preguntarte,help
+explicame que haces,help
+como te uso,help
+ayudame,help
+que consultas puedo hacer,help
+que sabes hacer,help
+que opciones tengo,help
+como consultar gastos,help
+como ver mi saldo,help
+como ver gastos,help
+mostrame ayuda,help
+menu de ayuda,help
+como funciona el chatbot,help
+que puedo pedir,help
+que haces,help
+para que servis,help
+como empiezo,help
+guia de uso,help
+ayuda por favor,help
+como ver movimientos,help
+como consultar categorias,help
+que preguntas puedo hacer,help
+como consultar,help
+necesito una guia,help
+como preguntar gastos,help
+que puedo consultar aca,help
+como usar esto,help
+ayuda general,help
+hola,unknown
+buen dia,unknown
+todo bien,unknown
+que tal,unknown
+jajaja,unknown
+no entiendo,unknown
+mmm,unknown
+cualquiera,unknown
+ok,unknown
+gracias,unknown
+chau,unknown
+buenas,unknown
+dale,unknown
+si,unknown
+no,unknown
+capaz,unknown
+que,unknown
+???,unknown
+asdf,unknown
+hola como estas,unknown
+jeje,unknown
+bien,unknown
+listo,unknown
+perfecto,unknown
+genial,unknown
+ah,unknown
+mmm no se,unknown
+claro,unknown
+todo ok,unknown
+bien ahi,unknown
+ok gracias,unknown
+saludos,unknown
+buenas tardes,unknown
+buenas noches,unknown
+todo tranqui,unknown
+👍,unknown
