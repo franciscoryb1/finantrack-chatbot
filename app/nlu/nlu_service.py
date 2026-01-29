@@ -1,72 +1,39 @@
 from app.core.interpretation import Interpretation
 from app.core.schemas import ChatRequest
+from app.nlu.rules_nlu import RulesNLU
+from app.nlu.intent_classifier.classifier import IntentClassifierService
 
 
 class NLUService:
     """
-    Servicio de Natural Language Understanding (NLU).
-
-    Responsabilidad:
-    - analizar el texto del usuario
-    - detectar intención
-    - extraer entidades (slots)
-    - devolver un Interpretation
+    NLU híbrido:
+    1) Reglas (rápidas y determinísticas)
+    2) Intent Classifier (ML) como fallback
     """
 
+    RULES_MIN_CONFIDENCE = 0.85
+    ML_MIN_CONFIDENCE = 0.65
+
+    def __init__(self):
+        self._rules = RulesNLU()
+        self._classifier = IntentClassifierService()
+
     def interpret(self, req: ChatRequest) -> Interpretation:
-        text = req.text.lower().strip()
+        text = req.text.strip()
 
-        # 1) HELP
-        if text in {"help", "ayuda", "?", "ayúdame"}:
-            return Interpretation(
-                intent="help",
-                confidence=1.0,
-            )
+        # 1) Reglas primero
+        rules_result = self._rules.interpret(text)
+        if rules_result.confidence >= self.RULES_MIN_CONFIDENCE:
+            return rules_result
 
-        # 2) GASTOS SIN PERIODO
-        if "gast" in text and not self._contains_month(text):
-            return Interpretation(
-                intent="get_expenses_total",
-                confidence=0.6,
-                needs_clarification=True,
-                missing_slots=["period"],
-                clarification_question=(
-                    "¿De qué mes querés el total de gastos? " "Por ejemplo: enero 2026"
-                ),
-            )
+        # Si reglas determinan que falta info, respetamos eso
+        if rules_result.needs_clarification:
+            return rules_result
 
-        # 3) GASTOS CON ENERO (MVP)
-        if "gast" in text and "enero" in text:
-            return Interpretation(
-                intent="get_expenses_total",
-                confidence=0.9,
-                entities={
-                    "period": {
-                        "type": "month",
-                        "value": "2026-01",
-                    }
-                },
-            )
+        # 2) ML classifier fallback
+        pred = self._classifier.predict(text)
 
-        # 4) FALLBACK
-        return Interpretation(
-            intent="unknown",
-            confidence=0.2,
-        )
+        if pred.confidence < self.ML_MIN_CONFIDENCE:
+            return Interpretation(intent="unknown", confidence=pred.confidence)
 
-    def _contains_month(self, text: str) -> bool:
-        months = [
-            "enero",
-            "febrero",
-            "marzo",
-            "abril",
-            "mayo",
-            "junio",
-            "julio",
-            "agosto",
-            "septiembre",
-            "octubre",
-            "noviembre",
-            "diciembre",
-        ]
-        return any(month in text for month in months)
+        return Interpretation(intent=pred.intent, confidence=pred.confidence)
