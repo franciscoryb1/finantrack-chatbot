@@ -6,22 +6,14 @@ from app.nlu.nlu_service import NLUService
 
 
 class ChatOrchestrator:
-    """
-    Orquesta el flujo del chatbot:
-    - delega NLU
-    - decide qué hacer con la interpretación
-    - construye la respuesta
-    """
-
     def __init__(self):
         self._nlu = NLUService()
 
-    def handle(self, req: ChatRequest) -> ChatResponse:
+    async def handle(self, req: ChatRequest) -> ChatResponse:
         trace_id = str(uuid4())
 
         interpretation: Interpretation = self._nlu.interpret(req)
 
-        # 1) Falta información → pedir aclaración
         if interpretation.needs_clarification:
             return ChatResponse(
                 replyText=interpretation.clarification_question
@@ -29,29 +21,20 @@ class ChatOrchestrator:
                 traceId=trace_id,
             )
 
-        # 2) Intent: gastos totales
-        if interpretation.intent == "get_expenses_total":
-            period = interpretation.entities.get("period", {}).get("value")
+        # ⚠️ por ahora seguimos con stub
+        if interpretation.intent == "get_movements":
             return ChatResponse(
-                replyText=(
-                    f"[stub] Ok. Voy a buscar tu gasto total del período {period}."
-                ),
+                replyText="[stub] Voy a buscar tus movimientos.",
                 traceId=trace_id,
             )
 
-        # 3) Intent: help
         if interpretation.intent == "help":
             return ChatResponse(
-                replyText=(
-                    "Podés preguntarme cosas como: " "'Cuánto gasté en enero 2026?'"
-                ),
+                replyText="Podés preguntarme por tus gastos, movimientos o saldo.",
                 traceId=trace_id,
             )
 
-        # 4) Fallback
         return ChatResponse(
-            replyText=(
-                "No terminé de entenderte. " "Probá con: 'Cuánto gasté en enero 2026?'"
-            ),
+            replyText="No terminé de entenderte. Probá con algo como 'mostrame mis gastos'.",
             traceId=trace_id,
         )
