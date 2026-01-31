@@ -5,3 +5,7 @@ __pycache__/
 .dist/
 .idea/
 .vscode/
+
+llmfallback-contract.md
+llmfallback.md
+.\app\nlu\documentation.md
