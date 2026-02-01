@@ -1,51 +1,57 @@
-from typing import Dict, Any, List
-
-from app.integrations.finance_api_client import FinanceApiClient
-from app.core.interpretation import Interpretation
+from app.actions.models import ActionResult
+from app.nlu.nlu_service import Interpretation
 
 
 class FinanceActions:
-    """
-    Acciones de dominio financiero usadas por el chatbot.
-    """
 
-    def __init__(self, api_client: FinanceApiClient | None = None):
-        self._api = api_client or FinanceApiClient()
-
-    async def get_movements(self, user_id: int, interpretation: Interpretation) -> str:
-        """
-        Ejecuta la acción get_movements y devuelve texto para el bot.
-        """
-
-        # Por ahora: solo gastos, primera página
-        filters: Dict[str, Any] = {
-            "type": "EXPENSE",
-        }
-
-        response = await self._api.list_movements(
-            user_id=user_id,
-            filters=filters,
-            page=1,
-            page_size=5,
+    def get_balance(self, interpretation: Interpretation) -> ActionResult:
+        return ActionResult(
+            reply_text="Tu saldo actual es $120.000",
+            data={"balance": 120000},
         )
 
-        items: List[Dict[str, Any]] = response.get("items", [])
-        total: int = response.get("total", 0)
+    def get_movements(self, interpretation: Interpretation) -> ActionResult:
+        return ActionResult(
+            reply_text="Estos son tus últimos movimientos:\n- Supermercado $12.500\n- Transporte $3.200",
+            data={
+                "movements": [
+                    {"desc": "Supermercado", "amount": 12500},
+                    {"desc": "Transporte", "amount": 3200},
+                ]
+            },
+        )
 
-        if not items:
-            return "No encontré gastos registrados."
+    def get_expenses_total(self, interpretation: Interpretation) -> ActionResult:
+        period = interpretation.entities.get("period", {}).get("label", "el período elegido")
+        category = interpretation.entities.get("category")
 
-        # Resumen corto (UX)
-        lines = []
-        for m in items[:3]:
-            desc = m.get("description") or "Sin descripción"
-            amount = m.get("amount")
-            category = m.get("category", {}).get("name", "Sin categoría")
-            lines.append(f"- {desc} (${amount}) [{category}]")
+        if category:
+            text = f"En {category} gastaste $35.000 durante {period}."
+        else:
+            text = f"En total gastaste $85.000 durante {period}."
 
-        summary = "\n".join(lines)
+        return ActionResult(
+            reply_text=text,
+            data={
+                "total": 85000,
+                "period": period,
+                "category": category,
+            },
+        )
 
-        return (
-            f"Encontré {total} gastos en total. "
-            f"Los últimos fueron:\n{summary}"
+    def get_expenses_by_category(self, interpretation: Interpretation) -> ActionResult:
+        return ActionResult(
+            reply_text=(
+                "Tus gastos por categoría:\n"
+                "- Comida: $40.000\n"
+                "- Transporte: $15.000\n"
+                "- Otros: $30.000"
+            ),
+            data={
+                "by_category": {
+                    "comida": 40000,
+                    "transporte": 15000,
+                    "otros": 30000,
+                }
+            },
         )
