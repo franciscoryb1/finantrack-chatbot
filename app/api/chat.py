@@ -1,57 +1,15 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.nlu.nlu_service import NLUService
-from app.conversation.resolver import ConversationResolver
-from app.conversation.store import get_state
+from app.core.config import settings
 
-from app.actions.dispatcher import ActionDispatcher
-from app.actions.models import ActionResult
+# 🧠 Agent (nuevo flujo)
+from app.agents import finance_agent
 
-# Acciones concretas
-from app.actions.movements.list_movements import ListMovementsAction
-
-# Infra
-from app.infra.chatbot_auth_client import ChatbotAuthClient
-from app.infra.finance_api_client import FinanceApiClient
-from app.infra.jwt_cache import JwtCache
-from app.infra.user_session_resolver import UserSessionResolver
+# 🧓 Legacy (flujo viejo, mientras dure la migración)
+from app.orchestrator.chat_orchestrator import ChatOrchestrator
 
 router = APIRouter()
-
-# -------------------------
-# Infra wiring (manual DI)
-# -------------------------
-
-jwt_cache = JwtCache()
-
-auth_client = ChatbotAuthClient()
-session_resolver = UserSessionResolver(
-    auth_client=auth_client,
-    cache=jwt_cache,
-)
-
-finance_client = FinanceApiClient()
-
-# -------------------------
-# Actions registry
-# -------------------------
-
-actions = {
-    "get_movements": ListMovementsAction(
-        session_resolver=session_resolver,
-        finance_client=finance_client,
-    ),
-}
-
-dispatcher = ActionDispatcher(actions)
-
-# -------------------------
-# NLU + Conversation
-# -------------------------
-
-nlu = NLUService()
-resolver = ConversationResolver(nlu)
 
 
 class ChatRequest(BaseModel):
@@ -62,24 +20,27 @@ class ChatRequest(BaseModel):
 @router.post("/chat")
 def chat(req: ChatRequest):
     """
-    Orquestador principal del chatbot
+    Endpoint principal del chatbot.
+
+    Usa LangChain Agent + tools si USE_AGENT=true.
+    Caso contrario, ejecuta el flujo legacy.
     """
-    # 1) Estado conversacional
-    state = get_state(req.userId)
 
-    # 2) Resolver intención + slots
-    interpretation = resolver.resolve(req.text, state)
+    # Agent + Tools
+    if settings.USE_AGENT:
+        result = finance_agent.run(
+            user_id=req.userId,
+            text=req.text,
+        )
 
-    # 3) Ejecutar acción
-    action_result: ActionResult = dispatcher.dispatch(
-        interpretation=interpretation,
-        user_id=req.userId,
-    )
+        # Contrato unificado
+        return {
+            "reply_text": result.get("reply_text", ""),
+            "data": result.get("data"),
+        }
 
-    # 4) Respuesta unificada
-    return {
-        "intent": interpretation.intent,
-        "needs_clarification": interpretation.needs_clarification,
-        "reply_text": action_result.reply_text,
-        "data": action_result.data,
-    }
+    # FLUJO LEGACY (mientras se migra todo)
+    orchestrator = ChatOrchestrator()
+    legacy_result = orchestrator.handle(req.userId, req.text)
+
+    return legacy_result

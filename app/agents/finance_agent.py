@@ -1,37 +1,42 @@
-from langchain.agents import create_openai_tools_agent, AgentExecutor
-from langchain_openai import ChatOpenAI
+from typing import TypedDict, List
 
-from app.agents.prompts import SYSTEM_PROMPT
-from app.agents.memory import build_memory
+from langgraph.graph import StateGraph, END
+from langchain_core.messages import HumanMessage, AIMessage
+
+from app.agents.llm.factory import build_llm
+
+
+class AgentState(TypedDict):
+    messages: List
+
 
 class FinanceAgent:
-    def __init__(self, tools: list):
-        self.llm = ChatOpenAI(
-            temperature=0,
-            model="gpt-4o-mini"
-        )
-        self.tools = tools
+    def __init__(self):
+        self.llm = build_llm()
+        self.graph = self._build_graph()
+
+    def _build_graph(self):
+        graph = StateGraph(AgentState)
+
+        graph.add_node("llm", self._llm_step)
+        graph.add_edge("llm", END)
+
+        graph.set_entry_point("llm")
+        return graph.compile()
+
+    def _llm_step(self, state: AgentState):
+        messages = state["messages"]
+        response = self.llm.invoke(messages)
+        return {"messages": messages + [response]}
 
     def run(self, user_id: str, text: str) -> dict:
-        memory = build_memory(user_id)
-
-        agent = create_openai_tools_agent(
-            llm=self.llm,
-            tools=self.tools,
-            prompt=SYSTEM_PROMPT
+        result = self.graph.invoke(
+            {"messages": [HumanMessage(content=text)]}
         )
 
-        executor = AgentExecutor(
-            agent=agent,
-            tools=self.tools,
-            memory=memory,
-            verbose=True
-        )
+        last = result["messages"][-1]
 
-        result = executor.invoke({"input": text})
-
-        # result["output"] es texto final del agent
         return {
-            "reply_text": result.get("output", ""),
-            "data": None
+            "reply_text": last.content,
+            "data": None,
         }

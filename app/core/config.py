@@ -6,17 +6,17 @@ class Settings(BaseSettings):
     app_name: str = "Finances Chatbot Service"
     app_env: str = "dev"
 
+    USE_AGENT: bool = True
+
+    # LLM
+    LLM_PROVIDER: str = "groq"  # groq | openai
+
+    OPENAI_API_KEY: str | None = None
+    GROQ_API_KEY: str | None = None
+
     # === Chatbot / Backend ===
     FINANCE_API_BASE_URL: str
     CHATBOT_API_KEY: str
-
-    # === LLM ===
-    ENABLE_LLM_FALLBACK: bool = Field(default=False)
-    GEMINI_API_KEY: str | None = Field(default=None)
-    GEMINI_MODEL: str = Field(default="gemini-1.5-flash")
-    GEMINI_TIMEOUT_SECONDS: float = Field(default=5.0)
-    
-    USE_AGENT: bool = Field(default=True)
 
     model_config = ConfigDict(
         env_file=".env",
