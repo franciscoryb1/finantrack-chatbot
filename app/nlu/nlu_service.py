@@ -2,9 +2,10 @@ from app.core.interpretation import Interpretation
 from app.core.schemas import ChatRequest
 from app.nlu.rules_nlu import RulesNLU
 from app.nlu.intent_classifier.classifier import IntentClassifierService
-
 from typing import Optional
 import anyio
+from datetime import date
+from app.time.period_parser import parse_period
 
 
 class NLUService:
@@ -80,18 +81,28 @@ class NLUService:
         Validación simple de slots obligatorios.
         Esto mantiene la lógica consistente para rules / ML / LLM.
         """
-
         if result.intent == "get_expenses_total":
-            # Heurística simple: si el texto menciona un período, no pedir aclaración
+            # 1) Intentar parsear período real (v1)
+            period = parse_period(normalized_text, today=date.today())
+
+            if period:
+                # Si logramos parsear un período, lo inyectamos en entities
+                result.entities["period"] = {
+                    "from": period.from_date.isoformat(),
+                    "to": period.to_date.isoformat(),
+                    "label": period.label,
+                }
+                return result
+
+            # 2) Heurística simple: si el texto menciona algo temporal,
+            # no pedir aclaración todavía (aunque no sepamos el rango exacto)
             period_keywords = [
                 "enero", "febrero", "marzo", "abril", "mayo", "junio",
                 "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
                 "mes", "ayer", "hoy", "semana", "año", "pasado", "este"
             ]
 
-            if not result.entities.get("period") and not any(
-                kw in normalized_text for kw in period_keywords
-            ):
+            if not any(kw in normalized_text for kw in period_keywords):
                 return Interpretation(
                     intent="get_expenses_total",
                     confidence=result.confidence,
@@ -102,6 +113,5 @@ class NLUService:
                         "Por ejemplo: enero, este mes, el mes pasado."
                     ),
                 )
-
 
         return result
