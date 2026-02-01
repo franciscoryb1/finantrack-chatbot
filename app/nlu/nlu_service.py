@@ -37,8 +37,8 @@ class NLUService:
         self._classifier = IntentClassifierService()
         self._llm_fallback = llm_fallback
 
-    def interpret(self, req: ChatRequest) -> Interpretation:
-        text = req.text.strip()
+    def interpret(self, text: str) -> Interpretation:
+        text = text.strip()
         t = text.lower()
 
         # 1) RULES
@@ -120,15 +120,32 @@ class NLUService:
 
             # 2) Heurística simple: detectar mención temporal
             period_keywords = [
-                "enero", "febrero", "marzo", "abril", "mayo", "junio",
-                "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
-                "mes", "ayer", "hoy", "semana", "año", "pasado", "este"
+                "enero",
+                "febrero",
+                "marzo",
+                "abril",
+                "mayo",
+                "junio",
+                "julio",
+                "agosto",
+                "septiembre",
+                "octubre",
+                "noviembre",
+                "diciembre",
+                "mes",
+                "ayer",
+                "hoy",
+                "semana",
+                "año",
+                "pasado",
+                "este",
             ]
 
             if not any(kw in normalized_text for kw in period_keywords):
                 return Interpretation(
                     intent="get_expenses_total",
                     confidence=result.confidence,
+                    entities=result.entities,  # 👈 CLAVE
                     needs_clarification=True,
                     missing_slots=["period"],
                     clarification_question=(

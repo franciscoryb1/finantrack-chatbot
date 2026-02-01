@@ -21,7 +21,7 @@ def make_req(text: str) -> ChatRequest:
 # =========================
 
 def test_help_intent(nlu):
-    res = nlu.interpret(make_req("ayuda"))
+    res = nlu.interpret("ayuda")
     assert res.intent == "help"
     assert res.confidence == 1.0
     assert not res.needs_clarification
@@ -38,7 +38,7 @@ def test_help_intent(nlu):
     "cuanta plata tengo",
 ])
 def test_get_balance(nlu, text):
-    res = nlu.interpret(make_req(text))
+    res = nlu.interpret(text)
     assert res.intent == "get_balance"
     assert res.confidence >= 0.9
     assert not res.needs_clarification
@@ -56,7 +56,7 @@ def test_get_balance(nlu, text):
     "gastos agrupados",
 ])
 def test_get_expenses_by_category(nlu, text):
-    res = nlu.interpret(make_req(text))
+    res = nlu.interpret(text)
     assert res.intent == "get_expenses_by_category"
     assert res.confidence >= 0.85
     assert not res.needs_clarification
@@ -73,7 +73,7 @@ def test_get_expenses_by_category(nlu, text):
     "ver transacciones",
 ])
 def test_get_movements(nlu, text):
-    res = nlu.interpret(make_req(text))
+    res = nlu.interpret(text)
     assert res.intent == "get_movements"
     assert res.confidence >= 0.85
     assert not res.needs_clarification
@@ -91,7 +91,7 @@ def test_get_movements(nlu, text):
     "cuánto gasté ayer",
 ])
 def test_get_expenses_total_with_period(nlu, text):
-    res = nlu.interpret(make_req(text))
+    res = nlu.interpret(text)
     assert res.intent == "get_expenses_total"
     assert not res.needs_clarification
 
@@ -107,7 +107,7 @@ def test_get_expenses_total_with_period(nlu, text):
     "decime cuánto gasté",
 ])
 def test_get_expenses_total_needs_period(nlu, text):
-    res = nlu.interpret(make_req(text))
+    res = nlu.interpret(text)
     assert res.intent == "get_expenses_total"
     assert res.needs_clarification
     assert res.missing_slots is not None
@@ -127,5 +127,5 @@ def test_get_expenses_total_needs_period(nlu, text):
     "qwerty",
 ])
 def test_unknown_intent(nlu, text):
-    res = nlu.interpret(make_req(text))
+    res = nlu.interpret(text)
     assert res.intent == "unknown"

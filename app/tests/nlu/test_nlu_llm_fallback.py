@@ -31,7 +31,7 @@ def test_llm_fallback_suggests_valid_intent(nlu):
         confidence=0.8,
     )
 
-    res = nlu.interpret(make_req("decime algo raro"))
+    res = nlu.interpret("decime algo raro")
 
     assert res.intent == "get_balance"
     assert res.confidence == 0.8
@@ -49,7 +49,7 @@ def test_llm_fallback_invalid_intent_is_rejected(nlu):
         confidence=0.9,
     )
 
-    res = nlu.interpret(make_req("algo totalmente raro"))
+    res = nlu.interpret("algo totalmente raro")
 
     assert res.intent == "unknown"
 
@@ -66,7 +66,7 @@ def test_llm_fallback_expenses_total_needs_period(nlu):
         entities={},
     )
 
-    res = nlu.interpret(make_req("cuanto gaste"))
+    res = nlu.interpret("cuanto gaste")
 
     assert res.intent == "get_expenses_total"
     assert res.needs_clarification
@@ -82,6 +82,6 @@ def test_llm_fallback_exception_returns_unknown(nlu):
 
     nlu._llm_fallback.suggest.side_effect = Exception("LLM down")
 
-    res = nlu.interpret(make_req("texto cualquiera"))
+    res = nlu.interpret("texto cualquiera")
 
     assert res.intent == "unknown"
