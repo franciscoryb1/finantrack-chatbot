@@ -1,39 +1,36 @@
-from typing import Optional
-from pydantic import BaseModel, Field
-from langchain.tools import tool
+from typing import Optional, List
+from pydantic import BaseModel
 
-from app.tools.base import ToolResult
-from app.actions.dispatcher import ActionDispatcher
-from app.slots.type_normalizer import normalize_type  # si aplica
-from app.slots.category_normalizer import normalize_category  # si aplica
+from app.infra.finance_api_client import FinanceApiClient
 
-class GetMovementsInput(BaseModel):
-    period: Optional[str] = Field(
-        default=None,
-        description="Periodo de tiempo, por ejemplo: 'hoy', 'este mes', 'mes pasado'"
-    )
 
-@tool(args_schema=GetMovementsInput)
-def get_movements(period: Optional[str] = None) -> ToolResult:
+class Movement(BaseModel):
+    id: str
+    description: str
+    amount: float
+    date: str
+
+
+class GetMovementsResult(BaseModel):
+    movements: List[Movement]
+
+
+def get_movements(user_id: str) -> GetMovementsResult:
     """
-    Obtiene los movimientos financieros del usuario.
+    Tool: obtiene los últimos movimientos del usuario
     """
 
-    # 1️⃣ Normalización (determinística)
-    entities = {}
-    if period:
-        entities["period"] = period  # si luego tenés normalizador de period, va acá
+    client = FinanceApiClient(user_id=user_id)
+    response = client.get_movements()
 
-    # 2️⃣ Dispatch a Action real
-    dispatcher = ActionDispatcher()
-
-    action_result = dispatcher.dispatch(
-        intent="get_movements",
-        entities=entities
+    return GetMovementsResult(
+        movements=[
+            Movement(
+                id=m["id"],
+                description=m["description"],
+                amount=m["amount"],
+                date=m["date"],
+            )
+            for m in response
+        ]
     )
-
-    # 3️⃣ Contrato de retorno estándar
-    return {
-        "reply_text": action_result.reply_text,
-        "data": action_result.data,
-    }
