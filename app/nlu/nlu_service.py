@@ -5,7 +5,11 @@ from app.nlu.intent_classifier.classifier import IntentClassifierService
 from typing import Optional
 import anyio
 from datetime import date
+
 from app.time.period_parser import parse_period
+
+from app.slots.type_normalizer import normalize_type
+from app.slots.category_normalizer import normalize_category
 
 
 class NLUService:
@@ -18,7 +22,7 @@ class NLUService:
 
     RULES_MIN_CONFIDENCE = 0.85
     ML_MIN_CONFIDENCE = 0.65
-    
+
     ALLOWED_INTENTS = {
         "get_balance",
         "get_movements",
@@ -56,7 +60,7 @@ class NLUService:
             )
             return self._finalize_with_slot_validation(ml_result, t)
 
-        # 3) LLM FALLBACK (ENCAPSULADO)
+        # 3) LLM FALLBACK
         llm_result = self._call_llm_fallback(text)
 
         if llm_result.intent in self.ALLOWED_INTENTS and llm_result.intent != "unknown":
@@ -78,15 +82,35 @@ class NLUService:
         self, result: Interpretation, normalized_text: str
     ) -> Interpretation:
         """
-        Validación simple de slots obligatorios.
+        Normalización + validación simple de slots obligatorios.
         Esto mantiene la lógica consistente para rules / ML / LLM.
         """
+
+        # ------------------------------------------------------------------
+        # 0) NORMALIZACIÓN GENÉRICA DE SLOTS (independiente del intent)
+        # ------------------------------------------------------------------
+
+        # type: EXPENSE | INCOME
+        if "type" not in result.entities:
+            t = normalize_type(normalized_text)
+            if t:
+                result.entities["type"] = t
+
+        # category: texto canónico simple
+        if "category" not in result.entities:
+            c = normalize_category(normalized_text)
+            if c:
+                result.entities["category"] = c
+
+        # ------------------------------------------------------------------
+        # 1) VALIDACIÓN ESPECÍFICA POR INTENT
+        # ------------------------------------------------------------------
+
         if result.intent == "get_expenses_total":
             # 1) Intentar parsear período real (v1)
             period = parse_period(normalized_text, today=date.today())
 
             if period:
-                # Si logramos parsear un período, lo inyectamos en entities
                 result.entities["period"] = {
                     "from": period.from_date.isoformat(),
                     "to": period.to_date.isoformat(),
@@ -94,8 +118,7 @@ class NLUService:
                 }
                 return result
 
-            # 2) Heurística simple: si el texto menciona algo temporal,
-            # no pedir aclaración todavía (aunque no sepamos el rango exacto)
+            # 2) Heurística simple: detectar mención temporal
             period_keywords = [
                 "enero", "febrero", "marzo", "abril", "mayo", "junio",
                 "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
