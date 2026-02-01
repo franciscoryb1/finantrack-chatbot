@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str | None = Field(default=None)
     GEMINI_MODEL: str = Field(default="gemini-1.5-flash")
     GEMINI_TIMEOUT_SECONDS: float = Field(default=5.0)
+    
+    USE_AGENT: bool = Field(default=True)
 
     model_config = ConfigDict(
         env_file=".env",
