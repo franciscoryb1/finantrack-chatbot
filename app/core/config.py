@@ -6,6 +6,11 @@ class Settings(BaseSettings):
     app_name: str = "Finances Chatbot Service"
     app_env: str = "dev"
 
+    # === Chatbot / Backend ===
+    FINANCE_API_BASE_URL: str
+    CHATBOT_API_KEY: str
+
+    # === LLM ===
     ENABLE_LLM_FALLBACK: bool = Field(default=False)
     GEMINI_API_KEY: str | None = Field(default=None)
     GEMINI_MODEL: str = Field(default="gemini-1.5-flash")

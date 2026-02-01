@@ -1,29 +1,27 @@
+from typing import Dict
+
+from app.actions.base import Action
 from app.actions.models import ActionResult
 from app.nlu.nlu_service import Interpretation
 
-from app.actions.balance.get_balance import get_balance
-from app.actions.movements.list_movements import get_movements
-from app.actions.expenses.get_total import get_expenses_total
-from app.actions.expenses.get_by_category import get_expenses_by_category
-
 
 class ActionDispatcher:
+    def __init__(self, actions: Dict[str, Action]):
+        """
+        actions: dict intent -> Action
+        """
+        self.actions = actions
 
-    def dispatch(self, interpretation: Interpretation) -> ActionResult:
-        intent = interpretation.intent
+    def dispatch(
+        self,
+        interpretation: Interpretation,
+        user_id: str,  # phone_number / wa_id / external id
+    ) -> ActionResult:
+        action = self.actions.get(interpretation.intent)
 
-        if intent == "get_balance":
-            return get_balance(interpretation)
+        if not action:
+            return ActionResult(
+                reply_text="No entendí qué querés hacer. ¿Podés reformular?",
+            )
 
-        if intent == "get_movements":
-            return get_movements(interpretation)
-
-        if intent == "get_expenses_total":
-            return get_expenses_total(interpretation)
-
-        if intent == "get_expenses_by_category":
-            return get_expenses_by_category(interpretation)
-
-        return ActionResult(
-            reply_text="No entendí qué querés hacer. ¿Podés reformular?",
-        )
+        return action.execute(interpretation, user_id)

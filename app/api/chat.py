@@ -4,69 +4,82 @@ from pydantic import BaseModel
 from app.nlu.nlu_service import NLUService
 from app.conversation.resolver import ConversationResolver
 from app.conversation.store import get_state
+
 from app.actions.dispatcher import ActionDispatcher
+from app.actions.models import ActionResult
+
+# Acciones concretas
+from app.actions.movements.list_movements import ListMovementsAction
+
+# Infra
+from app.infra.chatbot_auth_client import ChatbotAuthClient
+from app.infra.finance_api_client import FinanceApiClient
+from app.infra.jwt_cache import JwtCache
+from app.infra.user_session_resolver import UserSessionResolver
 
 router = APIRouter()
 
-# Core services
+# -------------------------
+# Infra wiring (manual DI)
+# -------------------------
+
+jwt_cache = JwtCache()
+
+auth_client = ChatbotAuthClient()
+session_resolver = UserSessionResolver(
+    auth_client=auth_client,
+    cache=jwt_cache,
+)
+
+finance_client = FinanceApiClient()
+
+# -------------------------
+# Actions registry
+# -------------------------
+
+actions = {
+    "get_movements": ListMovementsAction(
+        session_resolver=session_resolver,
+        finance_client=finance_client,
+    ),
+}
+
+dispatcher = ActionDispatcher(actions)
+
+# -------------------------
+# NLU + Conversation
+# -------------------------
+
 nlu = NLUService()
 resolver = ConversationResolver(nlu)
-dispatcher = ActionDispatcher()
 
 
 class ChatRequest(BaseModel):
-    userId: str
+    userId: str   # phone_number / wa_id
     text: str
 
 
-class ChatResponse(BaseModel):
-    replyText: str
-    intent: str | None = None
-    entities: dict | None = None
-    needsClarification: bool = False
-
-
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/chat")
 def chat(req: ChatRequest):
-    # 1️⃣ Obtener estado conversacional
+    """
+    Orquestador principal del chatbot
+    """
+    # 1) Estado conversacional
     state = get_state(req.userId)
 
-    # 2️⃣ Resolver NLU + contexto
-    result = resolver.resolve(req.text, state)
+    # 2) Resolver intención + slots
+    interpretation = resolver.resolve(req.text, state)
 
-    # 3️⃣ Si falta info → preguntar
-    if result.needs_clarification:
-        return ChatResponse(
-            replyText=_build_clarification_message(result),
-            intent=result.intent,
-            entities=result.entities,
-            needsClarification=True,
-        )
-
-    # 4️⃣ Ejecutar action
-    action_result = dispatcher.dispatch(result)
-
-    return ChatResponse(
-        replyText=action_result.reply_text,
-        intent=result.intent,
-        entities=result.entities,
-        needsClarification=False,
+    # 3) Ejecutar acción
+    action_result: ActionResult = dispatcher.dispatch(
+        interpretation=interpretation,
+        user_id=req.userId,
     )
 
-
-def _build_clarification_message(result) -> str:
-    missing = result.missing_slots or []
-
-    if "period" in missing:
-        return (
-            "¿De qué período querés la información? "
-            "Por ejemplo: hoy, este mes, el mes pasado, enero 2024."
-        )
-
-    if "category" in missing:
-        return (
-            "¿De qué categoría? "
-            "Por ejemplo: comida, transporte, servicios."
-        )
-
-    return "Me falta un dato para ayudarte."
+    # 4) Respuesta unificada
+    return {
+        "intent": interpretation.intent,
+        "needs_clarification": interpretation.needs_clarification,
+        "reply_text": action_result.reply_text,
+        "data": action_result.data,
+    }
