@@ -1,36 +1,22 @@
-from typing import Optional, List
-from pydantic import BaseModel
-
+from langchain_core.tools import tool
 from app.infra.finance_api_client import FinanceApiClient
 
+@tool(
+    name_or_callable="get_movements",
+    description=(
+        "Devuelve los movimientos financieros reales del usuario autenticado. "
+        "Usar SIEMPRE que el usuario pida ver movimientos, transacciones, "
+        "consumos, gastos recientes o actividad financiera."
+    ),
+)
+def get_movements(jwt: str) -> str:
+    client = FinanceApiClient()
+    data = client.list_movements(jwt=jwt)
 
-class Movement(BaseModel):
-    id: str
-    description: str
-    amount: float
-    date: str
-
-
-class GetMovementsResult(BaseModel):
-    movements: List[Movement]
-
-
-def get_movements(user_id: str) -> GetMovementsResult:
-    """
-    Tool: obtiene los últimos movimientos del usuario
-    """
-
-    client = FinanceApiClient(user_id=user_id)
-    response = client.get_movements()
-
-    return GetMovementsResult(
-        movements=[
-            Movement(
-                id=m["id"],
-                description=m["description"],
-                amount=m["amount"],
-                date=m["date"],
-            )
-            for m in response
-        ]
+    return (
+        "Últimos movimientos:\n"
+        + "\n".join(
+            f"- {m['date']}: {m['description']} ({m['amount']})"
+            for m in data.get("items", [])
+        )
     )

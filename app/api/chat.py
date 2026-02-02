@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from app.agents.finance_agent import finance_agent
+from app.infra.container import user_session_resolver
 
 router = APIRouter()
 
@@ -13,18 +14,15 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 def chat(req: ChatRequest):
-    """
-    Endpoint principal del chatbot.
-    Usa exclusivamente el Agent.
-    """
+    session = user_session_resolver.get_session(req.userId)
 
     result = finance_agent.run(
-        user_id=req.userId,
+        user_id=session.user_id,
         text=req.text,
+        jwt=session.jwt,
     )
 
-    # Contrato único del sistema (AgentResult)
     return {
-        "reply_text": result.reply_text,
-        "data": result.data,
+        "reply_text": result["reply_text"],
+        "data": result.get("data"),
     }

@@ -1,21 +1,23 @@
+from dataclasses import dataclass
 from app.infra.chatbot_auth_client import ChatbotAuthClient
-from app.infra.jwt_cache import JwtCache
+
+
+@dataclass
+class UserSession:
+    user_id: str
+    jwt: str
+    email: str | None = None
+
 
 class UserSessionResolver:
-    def __init__(
-        self,
-        auth_client: ChatbotAuthClient,
-        cache: JwtCache,
-    ):
+    def __init__(self, auth_client: ChatbotAuthClient):
         self.auth_client = auth_client
-        self.cache = cache
 
-    def get_jwt_for_user(self, phone_number: str) -> str:
-        cached = self.cache.get(phone_number)
-        if cached:
-            return cached
-
+    def get_session(self, phone_number: str) -> UserSession:
         data = self.auth_client.resolve_user(phone_number)
-        token = data["access_token"]
-        self.cache.set(phone_number, token)
-        return token
+
+        return UserSession(
+            user_id=str(data["user"]["id"]),
+            jwt=data["access_token"],
+            email=data["user"].get("email"),
+        )
