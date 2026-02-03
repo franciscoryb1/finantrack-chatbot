@@ -10,7 +10,7 @@ from app.agents.tools import build_tools
 
 class AgentState(TypedDict):
     messages: List[BaseMessage]
-    jwt: str
+    phone_number: str
 
 
 class FinanceAgent:
@@ -43,13 +43,13 @@ class FinanceAgent:
 
         return graph.compile(checkpointer=self.checkpointer)
 
-    def _llm_step(self, state: AgentState):
+    async def _llm_step(self, state: AgentState):
         messages = state["messages"]
-        response = self.llm.invoke(messages)
+        response = await self.llm.ainvoke(messages)
 
         return {
             "messages": messages + [response],
-            "jwt": state["jwt"],  # se propaga sin problema
+            "phone_number": state["phone_number"],
         }
 
     def _should_use_tools(self, state: AgentState) -> str:
@@ -60,31 +60,26 @@ class FinanceAgent:
 
         return "end"
 
-    def run(self, *, user_id: str, text: str, jwt: str) -> dict:
+    async def run(self, *, phone_number: str, text: str) -> str:
         system = SystemMessage(
             content=(
                 "Sos un asistente financiero personal.\n\n"
-
                 "Tenés acceso a herramientas que devuelven INFORMACIÓN REAL "
                 "del sistema financiero del usuario.\n\n"
-
-                "REGLA OBLIGATORIA:\n"
-                "- Si el usuario pide movimientos, transacciones, consumos, gastos, balance "
-                "o información financiera personal, TENÉS QUE usar una herramienta.\n"
-                "- NO respondas con texto explicativo sin usar una herramienta.\n"
-                "- NO digas que no tenés acceso a la información.\n\n"
-
-                "Si una herramienta está disponible y es relevante, usarla ES OBLIGATORIO."
+                "REGLAS OBLIGATORIAS:\n"
+                "- Si el usuario pide movimientos, transacciones, consumos, gastos, "
+                "balance o información financiera personal, TENÉS QUE usar una herramienta.\n"
+                "- No inventes datos.\n"
+                "- No digas que no tenés acceso a la información.\n"
             )
         )
 
-
-        result = self.graph.invoke(
+        result = await self.graph.ainvoke(
             {
                 "messages": [system, HumanMessage(content=text)],
-                "jwt": jwt,
+                "phone_number": phone_number,
             },
-            config={"configurable": {"thread_id": user_id}},
+            config={"configurable": {"thread_id": phone_number}},
         )
 
         messages = result.get("messages", [])
@@ -95,5 +90,3 @@ class FinanceAgent:
             "data": None,
         }
 
-
-finance_agent = FinanceAgent()
