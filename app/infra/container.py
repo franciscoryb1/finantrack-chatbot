@@ -1,3 +1,4 @@
+# app/infra/container.py
 from app.infra.chatbot_auth_client import ChatbotAuthClient
 from app.infra.user_session_resolver import UserSessionResolver
 

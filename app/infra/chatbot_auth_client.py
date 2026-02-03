@@ -1,8 +1,14 @@
+# app/infra/chatbot_auth_client.py
 import requests
 from app.core.config import settings
 
 
 class ChatbotAuthClient:
+    """
+    Cliente técnico del chatbot.
+    Se autentica exclusivamente con API KEY contra el backend.
+    """
+
     def __init__(self):
         self.base_url = settings.FINANCE_API_BASE_URL
         self.api_key = settings.CHATBOT_API_KEY

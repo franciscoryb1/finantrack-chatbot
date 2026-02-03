@@ -1,6 +1,8 @@
+# app/infra/user_session.py
 from dataclasses import dataclass
+from typing import Optional
 
 @dataclass
 class UserSession:
-    user_id: str
-    access_token: str
+    phone_number: str
+    user_id: Optional[str] = None
