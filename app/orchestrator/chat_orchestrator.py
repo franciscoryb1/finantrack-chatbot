@@ -13,6 +13,7 @@ from app.core.access_gate import decide_access, AccessLevel
 from app.nlu import NLUInterpreter
 
 # Tool
+from app.services.movements_service import fetch_movements
 from app.tools.movements import get_movements
 
 # Agent (solo para chat libre / explicación)
@@ -80,7 +81,16 @@ class ChatOrchestrator:
             )
 
         # 4️⃣ Ejecutar tool (fuente única de verdad)
-        tool_data: Dict[str, Any] = await get_movements(
+        # tool_data: Dict[str, Any] = await get_movements(
+        #     phone_number=session.phone_number,
+        #     from_date=interpretation.entities.get("from_date"),
+        #     to_date=interpretation.entities.get("to_date"),
+        #     page=interpretation.entities.get("page", 1),
+        #     page_size=interpretation.entities.get("page_size", 20),
+        # )
+        
+        # 4️⃣ Ejecutar tool (fuente única de verdad)
+        tool_data = await fetch_movements(
             phone_number=session.phone_number,
             from_date=interpretation.entities.get("from_date"),
             to_date=interpretation.entities.get("to_date"),

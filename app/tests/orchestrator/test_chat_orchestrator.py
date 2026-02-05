@@ -27,7 +27,7 @@ async def test_chat_free_flow():
         "app.orchestrator.chat_orchestrator.FinanceAgent.run",
         new=AsyncMock(return_value={"reply_text": "Hola!"}),
     ) as mock_agent_run, patch(
-        "app.orchestrator.chat_orchestrator.get_movements",
+        "app.orchestrator.chat_orchestrator.fetch_movements",
         new=AsyncMock(),
     ) as mock_tool:
 
@@ -67,7 +67,7 @@ async def test_financial_flow_executes_tool():
         "app.orchestrator.chat_orchestrator.decide_access",
         return_value=SimpleNamespace(access_level=AccessLevel.REAL_DATA_REQUIRED),
     ), patch(
-        "app.orchestrator.chat_orchestrator.get_movements",
+        "app.orchestrator.chat_orchestrator.fetch_movements",
         new=AsyncMock(return_value=fake_tool_data),
     ) as mock_tool, patch(
         "app.orchestrator.chat_orchestrator.FinanceAgent.run",
@@ -107,7 +107,7 @@ async def test_financial_flow_unknown_intent():
         "app.orchestrator.chat_orchestrator.NLUInterpreter.interpret",
         return_value=SimpleNamespace(intent="UNKNOWN", entities={}),
     ), patch(
-        "app.orchestrator.chat_orchestrator.get_movements",
+        "app.orchestrator.chat_orchestrator.fetch_movements",
         new=AsyncMock(),
     ) as mock_tool:
 

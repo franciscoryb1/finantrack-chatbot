@@ -5,30 +5,43 @@ from app.clients.base import BaseAPIClient
 from app.clients.movements.schemas import PaginatedMovements
 
 
-class MovementsClient(BaseAPIClient):
+class MovementsClient:
+    def __init__(self, base_url: str, api_key: str):
+        self._client = httpx.AsyncClient(
+            base_url=base_url,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+            },
+        )
+
     async def list_movements(
         self,
-        user_phone: str,
         *,
-        from_date: Optional[str] = None,
-        to_date: Optional[str] = None,
+        user_phone: str,
+        from_date: str | None = None,
+        to_date: str | None = None,
         page: int = 1,
         page_size: int = 20,
-    ) -> PaginatedMovements:
-
+    ):
         params = {
-            "fromDate": from_date,
-            "toDate": to_date,
             "page": page,
             "pageSize": page_size,
         }
+        if from_date:
+            params["fromDate"] = from_date
+            
+        if to_date:
+            params["toDate"] = to_date
+            
+        headers = {
+            "X-User-Phone": user_phone,
+        }
 
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
-            res = await client.get(
-                f"{self.base_url}/movements",
-                headers=self._headers(user_phone),
-                params={k: v for k, v in params.items() if v is not None},
-            )
+        res = await self._client.get(
+            "/chatbot/movements",
+            params=params,
+            headers=headers,
+        )
 
         res.raise_for_status()
-        return PaginatedMovements.model_validate(res.json())
+        return res.json()

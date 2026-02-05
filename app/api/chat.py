@@ -29,7 +29,7 @@ async def chat(req: ChatRequest):
     )
 
     return {
-        "reply_text": response.reply_text,
-        "data": response.data,
-        "trace_id": response.trace_id,
+        "replyText": response.replyText,
+        "traceId": response.traceId,
     }
+
