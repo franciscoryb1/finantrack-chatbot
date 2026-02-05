@@ -1,8 +1,9 @@
+# app/api/chat.py
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from app.agents.finance_agent import FinanceAgent
-from app.infra.container import user_session_resolver
+from app.orchestrator.chat_orchestrator import ChatOrchestrator
 
 router = APIRouter()
 
@@ -14,20 +15,21 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def chat(req: ChatRequest):
-    # 1️⃣ Resolver sesión del usuario usando el phone_number
-    session = user_session_resolver.resolve(req.phone_number)
+    """
+    Endpoint único de chat.
 
-    # 2️⃣ Crear el agente (stateless, el estado vive en LangGraph)
-    agent = FinanceAgent()
+    No contiene lógica de negocio.
+    Delegá todo al ChatOrchestrator.
+    """
+    orchestrator = ChatOrchestrator()
 
-    # 3️⃣ Ejecutar el agente
-    reply_text = await agent.run(
-        phone_number=session.phone_number,
+    response = await orchestrator.handle(
+        phone_number=req.phone_number,
         text=req.text,
     )
 
-    # 4️⃣ Responder
     return {
-        "reply_text": reply_text,
-        "data": None,
+        "reply_text": response.reply_text,
+        "data": response.data,
+        "trace_id": response.trace_id,
     }
