@@ -1,5 +1,3 @@
-# tests/orchestrator/test_chat_orchestrator.py
-
 import pytest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
@@ -27,7 +25,7 @@ async def test_chat_free_flow():
         return_value=SimpleNamespace(access_level=AccessLevel.NO_REAL_DATA),
     ), patch(
         "app.orchestrator.chat_orchestrator.FinanceAgent.run",
-        new=AsyncMock(return_value={"reply_text": "Hola!", "data": None}),
+        new=AsyncMock(return_value={"reply_text": "Hola!"}),
     ) as mock_agent_run, patch(
         "app.orchestrator.chat_orchestrator.get_movements",
         new=AsyncMock(),
@@ -38,7 +36,8 @@ async def test_chat_free_flow():
             text="hola",
         )
 
-        assert response.reply_text == "Hola!"
+        assert response.replyText == "Hola!"
+        assert response.traceId is not None
 
         mock_agent_run.assert_awaited_once()
         mock_tool.assert_not_awaited()
@@ -72,7 +71,7 @@ async def test_financial_flow_executes_tool():
         new=AsyncMock(return_value=fake_tool_data),
     ) as mock_tool, patch(
         "app.orchestrator.chat_orchestrator.FinanceAgent.run",
-        new=AsyncMock(return_value={"reply_text": "Estos son tus movimientos", "data": None}),
+        new=AsyncMock(return_value={"reply_text": "Estos son tus movimientos"}),
     ) as mock_agent_run:
 
         response = await orchestrator.handle(
@@ -80,7 +79,8 @@ async def test_financial_flow_executes_tool():
             text="mostrame mis movimientos",
         )
 
-        assert "movimientos" in response.reply_text.lower()
+        assert "movimientos" in response.replyText.lower()
+        assert response.traceId is not None
 
         mock_tool.assert_awaited_once()
         mock_agent_run.assert_awaited_once()
@@ -116,6 +116,7 @@ async def test_financial_flow_unknown_intent():
             text="algo raro que no se entiende",
         )
 
-        assert "no terminé de entender" in response.reply_text.lower()
+        assert "no terminé de entender" in response.replyText.lower()
+        assert response.traceId is not None
 
         mock_tool.assert_not_awaited()
