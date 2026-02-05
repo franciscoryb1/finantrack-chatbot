@@ -1,6 +1,8 @@
 from uuid import uuid4
 from typing import Any, Dict
 
+from requests import session
+
 from app.core.schemas import ChatResponse
 from app.infra.container import user_session_resolver
 
@@ -15,6 +17,9 @@ from app.tools.movements import get_movements
 
 # Agent (solo para chat libre / explicación)
 from app.agents.finance_agent import FinanceAgent
+
+# Prompt para explicación de datos reales
+from app.agents.prompts import build_movements_explanation_prompt
 
 
 class ChatOrchestrator:
@@ -83,15 +88,15 @@ class ChatOrchestrator:
             page_size=interpretation.entities.get("page_size", 20),
         )
 
-        # 5️⃣ Explicación con LLM (SIN tool_calls)
-        explanation_prompt = self._build_explanation_prompt(
+        # 5️⃣ Explicación con LLM
+        prompt = build_movements_explanation_prompt(
             user_text=text,
             data=tool_data,
         )
 
         explanation = await self._agent.run(
             phone_number=session.phone_number,
-            text=explanation_prompt,
+            text=prompt,
         )
 
         return ChatResponse(
@@ -99,22 +104,3 @@ class ChatOrchestrator:
             traceId=trace_id,
         )
 
-
-    # --------------------------------------------------
-    # Helpers
-    # --------------------------------------------------
-
-    def _build_explanation_prompt(self, *, user_text: str, data: Dict[str, Any]) -> str:
-        """
-        Construye un prompt controlado para que el LLM
-        SOLO explique datos reales ya obtenidos.
-        """
-        return (
-            "El usuario hizo la siguiente consulta:\n"
-            f"\"{user_text}\"\n\n"
-            "A continuación se muestran DATOS FINANCIEROS REALES del sistema.\n"
-            "NO inventes información ni llames herramientas.\n"
-            "Limitate únicamente a explicar lo que muestran los datos.\n\n"
-            f"DATOS:\n{data}\n\n"
-            "Explicá los resultados de forma clara y breve."
-        )

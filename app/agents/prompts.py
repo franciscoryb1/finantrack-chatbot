@@ -1,22 +1,36 @@
-from langchain_core.prompts import ChatPromptTemplate
+# app/agents/prompts.py
+
+from typing import Dict, Any
 
 
-AGENT_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            """
-                Sos un asistente de finanzas personales.
+def build_movements_explanation_prompt(
+    *,
+    user_text: str,
+    data: Dict[str, Any],
+    locale: str = "es-AR",
+) -> str:
+    """
+    Prompt controlado para explicar movimientos financieros reales.
 
-                Reglas IMPORTANTES:
-                - Si el usuario pide movimientos, gastos, transacciones, consumos
-                o información financiera, DEBÉS usar una tool.
-                - Nunca inventes datos financieros.
-                - Las tools devuelven datos reales del backend.
-                - Usá esos datos para construir la respuesta final.
-                - Si no necesitás una tool, respondé normalmente.
-            """.strip(),
-        ),
-        ("human", "{input}"),
-    ]
-)
+    Reglas:
+    - NO inventar datos
+    - NO llamar herramientas
+    - NO asumir información no presente
+    - Explicar de forma clara y breve
+    """
+
+    return (
+        "Sos un asistente financiero personal.\n\n"
+        "El usuario hizo la siguiente consulta:\n"
+        f"\"{user_text}\"\n\n"
+        "A continuación tenés DATOS FINANCIEROS REALES del sistema.\n"
+        "Tu única tarea es EXPLICAR lo que muestran esos datos.\n\n"
+        "REGLAS ABSOLUTAS:\n"
+        "- No inventes información.\n"
+        "- No supongas categorías, totales ni conclusiones no explícitas.\n"
+        "- No llames herramientas ni menciones su uso.\n"
+        "- Si los datos están vacíos, decilo claramente.\n\n"
+        "DATOS:\n"
+        f"{data}\n\n"
+        "Explicá los resultados de forma clara, breve y fácil de entender."
+    )
