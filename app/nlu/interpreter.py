@@ -1,59 +1,29 @@
-from __future__ import annotations
-
-from datetime import datetime
-from typing import Any, Dict, Optional
-
 from app.core.interpretation import Interpretation
-from app.nlu.rules import detect_intent, extract_date_range
+from app.nlu.model import run_nlu  # wrapper del modelo entrenado
 
 
 class NLUInterpreter:
     """
-    NLU v1 (rules-only), orientado a tools.
-    - Detecta intent SHOW_MOVEMENTS
-    - Extrae entidades (from_date, to_date, page, page_size)
-    - No ejecuta tools, no usa LLM
+    NLU v2 (NN-based)
+
+    Responsabilidades:
+    - Ejecutar el modelo NLU
+    - Devolver intent + slots semánticos + confidences
+    - NO normaliza
+    - NO ejecuta lógica de negocio
     """
 
-    def __init__(self, locale: str = "es_AR"):
-        self.locale = locale
-
-    def interpret(
-        self,
-        text: str,
-        *,
-        now: Optional[datetime] = None,
-    ) -> Interpretation:
-        intent, conf, intent_reason = detect_intent(text)
-        
-        print('Detected intent:', intent, 'with confidence:', conf)
-
-        entities: Dict[str, Any] = {}
-
-        # Solo extraemos entidades si el intent es SHOW_MOVEMENTS
-        if intent == "SHOW_MOVEMENTS":
-            dr = extract_date_range(text, now=now)
-            if dr.from_date:
-                entities["from_date"] = dr.from_date
-            if dr.to_date:
-                entities["to_date"] = dr.to_date
-
-            # v1: paginación por default (podés elegir no setearlos)
-            entities["page"] = 1
-            entities["page_size"] = 20
-
-            # Guardamos razones internas útiles para logs/debug
-            # (si no querés ensuciar entities, podés moverlo a logging)
-            entities["_debug"] = {
-                "intent_reason": intent_reason,
-                "date_reason": dr.reason,
-            }
+    def interpret(self, text: str) -> Interpretation:
+        result = run_nlu(text)
+        print(f"NLU result: {result}")
 
         return Interpretation(
-            intent=intent,
-            confidence=float(conf),
-            entities=entities,
-            needs_clarification=False,
-            missing_slots=[],
-            clarification_question=None,
+            intent=result["intent"],
+            intent_confidence=float(result["intent_confidence"]),
+
+            period_type=result.get("period_type"),
+            period_confidence=float(result.get("period_confidence", 0.0)),
+
+            category_hint=result.get("category_hint"),
+            category_confidence=float(result.get("category_confidence", 0.0)),
         )
