@@ -1,0 +1,76 @@
+text,intent,period_type,period_text,category_hint,category_text,amount_text,account_text
+cuál es mi saldo,SHOW_BALANCE,NONE,,NONE,,,
+cuánto dinero tengo,SHOW_BALANCE,NONE,,NONE,,,
+cuánta plata me queda,SHOW_BALANCE,NONE,,NONE,,,
+mostrame mi saldo,SHOW_BALANCE,NONE,,NONE,,,
+cuál es mi saldo actual,SHOW_BALANCE,TODAY,hoy,NONE,,,
+cuánto tengo hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,
+saldo de hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,
+cuál es mi saldo este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,
+cuánto dinero tengo este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,
+mostrame el saldo del mes,SHOW_BALANCE,THIS_MONTH,mes,NONE,,,
+cuál era mi saldo el mes pasado,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,
+cuánto tenía el mes pasado,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,
+mostrame el saldo del mes pasado,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,
+cuál es mi saldo en enero,SHOW_BALANCE,MONTH_NAME,enero,NONE,,,
+cuánto dinero tenía en febrero,SHOW_BALANCE,MONTH_NAME,febrero,NONE,,,
+saldo de enero,SHOW_BALANCE,MONTH_NAME,enero,NONE,,,
+saldo de febrero,SHOW_BALANCE,MONTH_NAME,febrero,NONE,,,
+cuánto tengo en la cuenta bancaria,SHOW_BALANCE,NONE,,NONE,,,"cuenta bancaria"
+saldo de mi cuenta bancaria,SHOW_BALANCE,NONE,,NONE,,,"cuenta bancaria"
+cuánto dinero hay en mi cuenta,SHOW_BALANCE,NONE,,NONE,,,"mi cuenta"
+cuánto tengo en efectivo,SHOW_BALANCE,NONE,,NONE,,,"efectivo"
+saldo en efectivo,SHOW_BALANCE,NONE,,NONE,,,"efectivo"
+cuánto tengo en mercado pago,SHOW_BALANCE,NONE,,NONE,,,"mercado pago"
+saldo de mercado pago,SHOW_BALANCE,NONE,,NONE,,,"mercado pago"
+cuál es el saldo de mi cuenta hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,"mi cuenta"
+cuánto tengo hoy en efectivo,SHOW_BALANCE,TODAY,hoy,NONE,,,"efectivo"
+saldo de la cuenta bancaria hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,"cuenta bancaria"
+cuál es mi saldo este mes en efectivo,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"efectivo"
+cuánto tengo este mes en la cuenta bancaria,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"cuenta bancaria"
+saldo del mes en mercado pago,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"mercado pago"
+cuál era mi saldo el mes pasado en efectivo,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,"efectivo"
+cuánto tenía el mes pasado en la cuenta bancaria,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,"cuenta bancaria"
+saldo del mes pasado en mercado pago,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,"mercado pago"
+cuál es mi saldo en enero en efectivo,SHOW_BALANCE,MONTH_NAME,enero,NONE,,,"efectivo"
+saldo de febrero en la cuenta bancaria,SHOW_BALANCE,MONTH_NAME,febrero,NONE,,,"cuenta bancaria"
+cuánto dinero tengo hoy en mercado pago,SHOW_BALANCE,TODAY,hoy,NONE,,,"mercado pago"
+cuánto saldo tengo hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,
+cuánto dinero me queda hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,
+cuál es mi saldo total,SHOW_BALANCE,NONE,,NONE,,,
+saldo total,SHOW_BALANCE,NONE,,NONE,,,
+cuánto tengo disponible,SHOW_BALANCE,NONE,,NONE,,,
+cuánto dinero tengo disponible hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,
+cuál es mi saldo disponible,SHOW_BALANCE,NONE,,NONE,,,
+saldo disponible este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,
+cuánto tenía de saldo la semana pasada,SHOW_BALANCE,LAST_N_DAYS,la semana pasada,NONE,,,
+saldo de la semana pasada,SHOW_BALANCE,LAST_N_DAYS,la semana pasada,NONE,,,
+cuánto dinero tenía la semana pasada,SHOW_BALANCE,LAST_N_DAYS,la semana pasada,NONE,,,
+cuál es mi saldo del 1 al 10,SHOW_BALANCE,DATE_RANGE,del 1 al 10,NONE,,,
+saldo del 5 al 20,SHOW_BALANCE,DATE_RANGE,del 5 al 20,NONE,,,
+cuánto tenía del 10 al 15,SHOW_BALANCE,DATE_RANGE,del 10 al 15,NONE,,,
+saldo del 1 al 31,SHOW_BALANCE,DATE_RANGE,del 1 al 31,NONE,,,
+cuánto tengo en mi cuenta este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"mi cuenta"
+saldo de mi cuenta el mes pasado,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,"mi cuenta"
+cuánto tenía en efectivo la semana pasada,SHOW_BALANCE,LAST_N_DAYS,la semana pasada,NONE,,,"efectivo"
+saldo de efectivo hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,"efectivo"
+cuánto dinero tengo en la cuenta hoy,SHOW_BALANCE,TODAY,hoy,NONE,,,"cuenta"
+saldo de la cuenta este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"cuenta"
+cuál es mi saldo en mercado pago este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"mercado pago"
+cuánto tenía en mercado pago el mes pasado,SHOW_BALANCE,LAST_MONTH,el mes pasado,NONE,,,"mercado pago"
+saldo de enero en mercado pago,SHOW_BALANCE,MONTH_NAME,enero,NONE,,,"mercado pago"
+saldo de febrero en efectivo,SHOW_BALANCE,MONTH_NAME,febrero,NONE,,,"efectivo"
+cuánto dinero tengo del 1 al 15,SHOW_BALANCE,DATE_RANGE,del 1 al 15,NONE,,,
+saldo entre el 5 y el 25,SHOW_BALANCE,DATE_RANGE,del 5 al 25,NONE,,,
+cuál es mi saldo del 10 al 20 en efectivo,SHOW_BALANCE,DATE_RANGE,del 10 al 20,NONE,,,"efectivo"
+saldo de la cuenta del 1 al 31,SHOW_BALANCE,DATE_RANGE,del 1 al 31,NONE,,,"cuenta"
+cuánto tengo hoy en mi cuenta,SHOW_BALANCE,TODAY,hoy,NONE,,,"mi cuenta"
+saldo hoy en efectivo,SHOW_BALANCE,TODAY,hoy,NONE,,,"efectivo"
+cuánto dinero tengo ahora,SHOW_BALANCE,TODAY,hoy,NONE,,,
+saldo actual en la cuenta,SHOW_BALANCE,TODAY,hoy,NONE,,,"cuenta"
+cuánto saldo tengo este mes,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,
+saldo del mes en efectivo,SHOW_BALANCE,THIS_MONTH,este mes,NONE,,,"efectivo"
+cuánto dinero tenía ayer,SHOW_BALANCE,YESTERDAY,ayer,NONE,,,
+saldo de ayer,SHOW_BALANCE,YESTERDAY,ayer,NONE,,,
+cuál era mi saldo ayer en efectivo,SHOW_BALANCE,YESTERDAY,ayer,NONE,,,"efectivo"
+cuánto tenía ayer en la cuenta,SHOW_BALANCE,YESTERDAY,ayer,NONE,,,"cuenta"

@@ -1,0 +1,34 @@
+{
+  "intent": [
+    "ADD_EXPENSE",
+    "ADD_INCOME",
+    "HELP",
+    "SHOW_ACCOUNTS",
+    "SHOW_BALANCE",
+    "SHOW_CATEGORIES",
+    "SHOW_CREDIT_CARDS",
+    "SHOW_MOVEMENTS",
+    "SMALLTALK"
+  ],
+  "period_type": [
+    "DATE_RANGE",
+    "LAST_MONTH",
+    "LAST_N_DAYS",
+    "MONTH_NAME",
+    "NONE",
+    "THIS_MONTH",
+    "TODAY",
+    "YESTERDAY"
+  ],
+  "category_hint": [
+    "ENTERTAINMENT",
+    "FOOD",
+    "HEALTH",
+    "NONE",
+    "OTHER",
+    "RENT",
+    "SERVICES",
+    "SUPERMARKET",
+    "TRANSPORT"
+  ]
+}
