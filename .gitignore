@@ -10,3 +10,5 @@ llmfallback-contract.md
 llmfallback.md
 .\app\nlu\documentation.md
 structure.md
+
+app\training\v1\models\nlu_model_v1.pt
